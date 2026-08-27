@@ -1,0 +1,36 @@
+# Ne hariç tutulur?
+#   .dockerignore, .gitignore gibi çalışır.
+#   Docker image'ı build ederken bu dosyalar KOPYALANMAZ.
+#   Amaç: Image boyutunu küçültmek + gereksiz dosya taşımamak.
+
+# Sanal ortam — container kendi kurar, bizimkini istemez
+.venv/
+
+# Python cache — otomatik yeniden oluşturulur
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Model ve veri dosyaları — volume ile mount edeceğiz
+# (Büyük dosyalar image'a girmemeli)
+models/
+.chromadb/
+
+# Geliştirme araçları
+.git/
+.gitignore
+*.md
+notebooks/
+
+# Ortam dosyaları — runtime'da geçilecek
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# Test ve log çıktıları
+outputs/
+tests/

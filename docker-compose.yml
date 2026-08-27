@@ -1,0 +1,109 @@
+# docker-compose.yml
+# -------------------
+# Docker Compose, birden fazla container'ı birlikte yönetir.
+# "docker-compose up" ile tüm servisler tek komutla ayağa kalkar.
+#
+# Servisler:
+#   api       → FastAPI (port 8000)
+#   streamlit → Streamlit UI (port 8501)
+#
+# Ollama host makinende çalışmaya devam eder (container değil).
+# Container'lar ona "host.docker.internal" üzerinden bağlanır.
+
+version: "3.9"
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # FastAPI Servisi
+  # ---------------------------------------------------------------------------
+  api:
+    # build: . → mevcut dizindeki Dockerfile'ı kullan
+    build: .
+
+    # container_name: container'a özel isim ver (docker ps'de görünür)
+    container_name: diabetes_api
+
+    # command: Dockerfile'daki CMD'i override et
+    command: python run_api.py
+
+    ports:
+      # "host_port:container_port"
+      # Sol taraf: senin bilgisayarında hangi port
+      # Sağ taraf: container içinde hangi port
+      - "8000:8000"
+
+    environment:
+      # Ollama host makinede çalışıyor.
+      # "host.docker.internal" → Windows/Mac'te container'dan host'a erişim adresi
+      # Linux'ta: "172.17.0.1" veya "--add-host=host.docker.internal:host-gateway"
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - OLLAMA_MODEL=llama3.1:8b
+      - LLM_BACKEND=ollama
+
+    volumes:
+      # Eğitilmiş ML modelleri (.joblib dosyaları)
+      - ./models:/app/models
+
+      # ChromaDB vector store (RAG için)
+      - ./.chromadb:/app/.chromadb
+
+      # HuggingFace model cache — yerel cache direkt mount ediliyor
+      # Böylece multilingual-e5-small her container başlatmada yeniden indirilmez
+      - C:/Users/kadir/.cache/huggingface:/root/.cache/huggingface
+
+      # İşlenmiş veri
+      - ./data/processed:/app/data/processed
+
+      # Log dosyaları
+      - ./outputs:/app/outputs
+
+    # restart: unless-stopped → Container çökerse otomatik yeniden başlat
+    # "unless-stopped" = manuel durdurulmadıkça yeniden başlat
+    restart: unless-stopped
+
+    # healthcheck: Container sağlıklı mı diye periyodik kontrol
+    # Bu olmadan docker-compose servislerin hazır olup olmadığını bilemez
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s   # API yüklenirken (model eğitimi + RAG) healthcheck bekler
+
+  # ---------------------------------------------------------------------------
+  # Streamlit Servisi
+  # ---------------------------------------------------------------------------
+  streamlit:
+    # Aynı image'ı kullanıyor — sadece command farklı
+    build: .
+
+    container_name: diabetes_streamlit
+
+    command: >
+      python -m streamlit run app.py
+      --server.port=8501
+      --server.address=0.0.0.0
+      --server.headless=true
+
+    ports:
+      - "8501:8501"
+
+    environment:
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - OLLAMA_MODEL=llama3.1:8b
+      - LLM_BACKEND=ollama
+
+    volumes:
+      - ./models:/app/models
+      - ./.chromadb:/app/.chromadb
+      - C:/Users/kadir/.cache/huggingface:/root/.cache/huggingface
+      - ./data/processed:/app/data/processed
+      - ./outputs:/app/outputs
+
+    # depends_on: Bu servis başlamadan önce "api" sağlıklı olmalı
+    depends_on:
+      api:
+        condition: service_healthy
+
+    restart: unless-stopped

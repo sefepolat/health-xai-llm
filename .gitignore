@@ -1,0 +1,67 @@
+# ==============================================================
+# .gitignore
+# LLM-Assisted Explainable AI for Health Risk Prediction
+# ==============================================================
+
+# --- Ortam ve Gizli Dosyalar ---
+.env
+*.env
+
+# --- Sanal Ortam ---
+.venv/
+venv/
+env/
+
+# --- Python Önbellek ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# --- Dağıtım / Paket ---
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# --- Test ve Coverage ---
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# --- Tip Kontrolü ---
+.mypy_cache/
+
+# --- IDE ---
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# --- Jupyter Notebook Checkpoint ---
+.ipynb_checkpoints/
+
+# --- Veri (işlenmiş, otomatik üretilen) ---
+data/processed/
+
+# NOT: data/raw/ (diabetes.csv) ve data/knowledge_base/ Git'e dahil edilir.
+
+# --- Eğitilmiş Modeller (ağır, otomatik üretilir) ---
+models/
+
+# --- ChromaDB Vector Store (otomatik üretilir) ---
+.chromadb/
+
+# --- Çıktılar ve Loglar ---
+outputs/
+*.log
+
+# --- Kök dizindeki geçici CSV dışa aktarmaları ---
+# Not: /*.csv sadece kök dizini etkiler, data/raw/diabetes.csv dahil kalır
+/*.csv
+
+# --- OS ---
+.DS_Store
+Thumbs.db

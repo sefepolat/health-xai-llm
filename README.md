@@ -307,7 +307,7 @@ health-risk-project/
 ├── docker-compose.yml      # Çoklu konteyner orkestrasyonu (API + UI)
 ├── requirements.txt        # Yerel ortam bağımlılıkları
 ├── requirements.docker.txt # Docker ortamı için hafif (CPU-only) bağımlılıklar
-└── .env.example            # Örnek ortam değişkenleri dosyası
+└── .env.example            # Örnek ortam değişkenleri dosyası 
 ```
 
 ---

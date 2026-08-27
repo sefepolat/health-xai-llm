@@ -48,7 +48,7 @@ An end-to-end clinical decision support system built on the **Pima Indians Diabe
 
 ---
 
-### 💻 Technologies & Libraries
+### 💻 Technologies & Libraries / 🛠️ Kullanılan Teknolojiler
 
 - **Machine Learning & Preprocessing:** `scikit-learn`, `xgboost`, `imbalanced-learn`, `pandas`, `numpy`
 - **Explainable AI (XAI):** `shap`, `lime`

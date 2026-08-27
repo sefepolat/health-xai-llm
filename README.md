@@ -43,7 +43,7 @@ Pima Indians Diabetes veri seti üzerinde eğitilmiş, XGBoost tabanlı bir maki
 
 ---
 
-## 🛠️ Teknoloji Yığını
+## 🛠️ Kullanılan Teknolojiler
 
 | Katman | Teknoloji |
 |---|---|
